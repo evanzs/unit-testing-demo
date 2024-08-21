@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent implements OnInit {
+
+  // item responsavel por renderizar o menu na tela
   menuItems = [{
       name: 'Home'
     }, {

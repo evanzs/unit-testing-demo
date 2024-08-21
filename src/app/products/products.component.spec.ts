@@ -20,6 +20,15 @@ describe('ProductsComponent', () => {
   ]);
 
   mockProductService.getProducts.and.returnValue(of([]));
+  mockProductService.deleteProduct.and.returnValue(of([]));
+
+  const productStub:Product ={
+    id:'1',
+    title: '',
+    price: '',
+    description: '',
+    category: ''
+  }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -33,30 +42,82 @@ describe('ProductsComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProductsComponent);
-    component = fixture.componentInstance;
     dialog = TestBed.inject(MatDialog);
     matSnackBar = TestBed.inject(MatSnackBar);
     mockProductService = TestBed.inject(ProductsService);
+
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
+    mockProductService.getProducts.and.returnValue(of([]));
+    spyOn(component,'getProducts');
     expect(component).toBeTruthy();
   });
 
   describe('should test get products initially', () => {
-    it('should get product data initially', () => {});
+    it('should get product data initially', () => {
+      mockProductService.getProducts.and.returnValue(of([productStub]));
 
-    it('should get product data initially on failure', () => {});
+      component.getProducts()
+      expect(component.productData).toEqual([productStub]);
+
+    });
+
+    it('should get product data initially on failure', () => {
+        mockProductService.getProducts.and.returnValue( throwError(()=> new Error('erro sumulado')))
+        expect(mockProductService.getProducts).toHaveBeenCalled();
+    });
   });
 
-  it('should test openDialog', () => {});
+  it('should test openDialog', () => {
+    mockProductService.getProducts.and.returnValue(of([]));
+    component.openDialog()
+    expect(dialog.open).toHaveBeenCalled();
 
-  it('should test editDialog', () => {});
+  });
+
+  it('should test editDialog', () => {
+
+    mockProductService.getProducts.and.returnValue(of([]));
+    component.editProduct(productStub)
+    expect(dialog.open).toHaveBeenCalled();
+  });
 
   describe('should test deleteProduct', () => {
-    it('should test deleteProduct on success', () => {});
+    it('should test deleteProduct on success', () => {
+      spyOn(component,'getProducts');
 
-    it('should test deleteProduct on failure', () => {});
+      const productStub:Product ={
+        id:'1',
+        title: '',
+        price: '',
+        description: '',
+        category: ''
+      }
+
+      mockProductService.deleteProduct.and.returnValue( of(productStub))
+      component.deleteProduct(productStub)
+      expect(mockProductService.deleteProduct).toHaveBeenCalledWith(productStub.id);
+      expect(matSnackBar.open).toHaveBeenCalledWith('Deleted Successfully!...', '', { duration: 3000 });
+    });
+
+    it('should test deleteProduct on failure', () => {
+        const productStub:Product ={
+        id:'1',
+        title: '',
+        price: '',
+        description: '',
+        category: ''        
+        }
+
+        mockProductService.deleteProduct.and.returnValue( throwError(()=> new Error('erro sumulado')))
+        component.deleteProduct(productStub)
+        fixture.detectChanges();
+        expect(mockProductService.deleteProduct).toHaveBeenCalledWith(productStub.id);
+        expect(matSnackBar.open).toHaveBeenCalledWith('Something went wrong!...', '',{ duration: 3000 });
+
+    });
   });
 });

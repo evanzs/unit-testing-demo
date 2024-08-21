@@ -29,6 +29,11 @@ export class AddProductComponent implements OnInit {
     this._data = d;
   }
 
+  /**
+  * ngOnInit() responsavel pela inicialização do componente.
+  * Inicia os valores do formuláro se já tiver valor
+  * @returns vazio
+  */
   ngOnInit(): void {
     const hasData = this.data && Object.keys(this.data).length;
     this.productForm = new FormGroup({
@@ -39,6 +44,12 @@ export class AddProductComponent implements OnInit {
     });
   }
 
+    /**
+  * saveProduct() responsavel por salvar ou editar o produto dependendo dos valores do formulário.
+  * se ocorrer algum erro, uma mensagem será mostrada na tela, 
+  * senão aparecerá uma mensagem de sucesso e o dialog será fechado
+  * @returns vazio
+  */
   saveProduct() {
     const product = this.productForm.value as Product;
     if (Object.keys(this.data).length) {
